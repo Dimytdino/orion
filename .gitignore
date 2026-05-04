@@ -1,0 +1,15 @@
+# Fichiers secrets - ne jamais commiter
+.env
+*.env
+
+# Dossiers temporaires
+__pycache__/
+*.pyc
+*.pyo
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
