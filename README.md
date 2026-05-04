@@ -15,3 +15,4 @@ POC GeoNode 5 - Plateforme de données géospatiales
 
 ## Journal des modifications
 - 2026-05-04 : Installation GeoNode 5, première couche publiée
+- 2026-05-04 : Configuration Git et GitHub
