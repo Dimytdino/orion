@@ -1,15 +1,66 @@
-# Fichiers secrets - ne jamais commiter
+# =========================================================
+# Fichiers secrets — NE JAMAIS commiter
+# =========================================================
 .env
 *.env
+!.env.sample        # garde le modèle (avec des placeholders uniquement)
+!.env.example
 
-# Dossiers temporaires
+# =========================================================
+# Python
+# =========================================================
 __pycache__/
 *.pyc
 *.pyo
+*.pyd
+.Python
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+env/
 
-# Logs
+# =========================================================
+# Node / JavaScript (front Vite/React)
+# =========================================================
+node_modules/
+dist/
+build/
+.vite/
+*.tsbuildinfo
+.eslintcache
+
+# =========================================================
+# Logs et fichiers temporaires
+# =========================================================
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.tmp
+*.swp
 
-# OS
+# =========================================================
+# IDE / éditeurs
+# =========================================================
+.vscode/
+.idea/
+*.iml
+*.sublime-*
+
+# =========================================================
+# Système d'exploitation
+# =========================================================
 .DS_Store
 Thumbs.db
+desktop.ini
+
+# =========================================================
+# Données locales / volumes Docker
+# =========================================================
+data/
+backups/
+*.dump
+*.sql.gz
