@@ -6,21 +6,55 @@ import OSM from 'ol/source/OSM'
 import TileWMS from 'ol/source/TileWMS'
 import { fromLonLat } from 'ol/proj'
 import 'ol/ol.css'
-import layersConfig from './config/layers'
+import { fetchLayers } from './services/geonode'
+import layersFallback from './config/layers'
 import LayerPanel from './components/LayerPanel'
 import SearchBar from './components/SearchBar'
 
 function App() {
-  // État : liste des couches avec leur visibilité
-  const [layers, setLayers] = useState(layersConfig)
+  const [layers, setLayers] = useState([])
+  const [loading, setLoading] = useState(true)
   const mapRef = useRef(null)
-  const olLayersRef = useRef([])  // référence aux couches OpenLayers
+  const mapInstanceRef = useRef(null)
+  const olLayersRef = useRef([])
 
-  // Initialisation de la carte
+  // Chargement des couches depuis l'API GeoNode au démarrage
+  useEffect(() => {
+    fetchLayers()
+      .then(setLayers)
+      .catch(() => {
+        // GeoNode inaccessible : on affiche les couches de secours
+        setLayers(layersFallback)
+      })
+      .finally(() => setLoading(false))
+  }, [])
+
+  // Initialisation de la carte (une seule fois)
   useEffect(() => {
     const basemap = new TileLayer({ source: new OSM() })
 
-    const wmsLayers = layersConfig.map(
+    const map = new Map({
+      target: mapRef.current,
+      layers: [basemap],
+      view: new View({
+        center: fromLonLat([2.3522, 46.8566]),
+        zoom: 6,
+      }),
+    })
+
+    mapInstanceRef.current = map
+    return () => map.setTarget(null)
+  }, [])
+
+  // Synchronisation des couches WMS quand la liste change
+  useEffect(() => {
+    const map = mapInstanceRef.current
+    if (!map || layers.length === 0) return
+
+    // Retire les anciennes couches WMS (on garde la couche de fond en index 0)
+    olLayersRef.current.forEach((l) => map.removeLayer(l))
+
+    const wmsLayers = layers.map(
       (cfg) =>
         new TileLayer({
           source: new TileWMS({
@@ -33,19 +67,9 @@ function App() {
         })
     )
 
-    olLayersRef.current = wmsLayers  // on garde une référence aux couches OL
-
-    const map = new Map({
-      target: mapRef.current,
-      layers: [basemap, ...wmsLayers],
-      view: new View({
-        center: fromLonLat([2.3522, 46.8566]),
-        zoom: 6,
-      }),
-    })
-
-    return () => map.setTarget(null)
-  }, [])
+    wmsLayers.forEach((l) => map.addLayer(l))
+    olLayersRef.current = wmsLayers
+  }, [layers])
 
   // Fonction appelée quand on coche/décoche une couche
   function handleToggle(id) {
@@ -87,16 +111,22 @@ function App() {
 }
 
   return (
-  <div style={{ position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden' }}>
-    <div ref={mapRef} style={{ 
-      position: 'absolute',   // ← ajout
-      top: 0, left: 0,        // ← ajout
-      width: '100%', 
-      height: '100%' 
-    }} />
-    <LayerPanel layers={layers} onToggle={handleToggle} onToggleGroup={handleToggleGroup} />
-    <SearchBar />
-  </div>
+    <div style={{ position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden' }}>
+      <div ref={mapRef} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }} />
+
+      {loading && (
+        <div style={{
+          position: 'absolute', top: 16, left: '50%', transform: 'translateX(-50%)',
+          backgroundColor: 'rgba(13,33,55,0.9)', color: '#8aafc8',
+          padding: '8px 16px', borderRadius: '6px', fontSize: '13px', zIndex: 2000,
+        }}>
+          Chargement des couches…
+        </div>
+      )}
+
+      <LayerPanel layers={layers} onToggle={handleToggle} onToggleGroup={handleToggleGroup} />
+      <SearchBar />
+    </div>
   )
 }
 

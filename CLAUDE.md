@@ -132,8 +132,8 @@ Ce projet a aussi une dimension **pédagogique** : il sert à monter en compéte
 - [x] POC : première couche publiée
 - [x] POC : front React + OpenLayers minimal avec Map / SearchBar / LayerPanel
 - [ ] Nettoyage : retirer les `LayerPanel_old*.jsx` une fois validé
-- [ ] ADR 0001 : choix de la stratégie d'organisation des dépôts (geonode-project ?)
-- [ ] Migration vers geonode-project (si l'ADR le confirme)
+- [x] ADR 0001 : choix de la stratégie d'organisation des dépôts (geonode-project) (2026-05-19)
+- [x] Migration vers geonode-project — branche mergée dans `orion-geonode` (2026-05-19)
 - [ ] CI GitHub Actions (lint + build front + tests)
 - [ ] Équipe d'agents IA (sous-agents Claude Code dans `.claude/agents/`)
 - [ ] Documentation d'architecture initiale

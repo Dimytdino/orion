@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git push)",
+      "Bash(git push origin *)",
+      "Bash(git commit *)",
+      "Bash(npm run lint)",
+      "Bash(npm run build)",
+      "Bash(npm run build *)",
+      "Bash(docker exec django4geonode *)",
+      "Bash(docker cp *)",
+      "Bash(mkdir -p *)"
+    ]
+  }
+}
