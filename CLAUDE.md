@@ -90,8 +90,10 @@ Ce projet a aussi une dimension **pédagogique** : il sert à monter en compéte
 ### Documentation
 - **Doc technique** : dans le dépôt, en Markdown, dossier `docs/`.
 - **ADR** (Architecture Decision Records) : dans `docs/adr/`, un fichier par décision structurante, numéroté.
+- **Journaux de session** : dans `docs/journal/`, un fichier `JOURNAL_AAAA-MM-JJ.md` par journée de travail significative. Permet aux différents outils (Cowork, Claude Code dans VS Code, autres agents) de savoir ce qui a été fait et ce qui reste à faire entre les sessions. Généré par `gardien-doc` à la demande, format défini dans `.claude/agents/gardien-doc.md`.
 - **README** : doit permettre à un nouveau venu de lancer le projet localement en moins de 15 minutes.
 - **CLAUDE.md** : `orion/CLAUDE.md` est la **source de vérité projet**. `orion-geonode/CLAUDE.md` contient uniquement le contexte technique back-end et renvoie ici. Tout changement structurant (nouveau repo, nouvelle phase, changement d'architecture) doit être répercuté dans les deux fichiers. **Responsable : agent `gardien-doc`.**
+- **AGENTS.md** : à la racine de chaque repo, c'est une **façade multi-agents** (Claude, Codex, Cursor, Aider, etc.) qui renvoie vers `CLAUDE.md`. La source de vérité reste `CLAUDE.md` ; `AGENTS.md` ne contient qu'un résumé minimum vital. Doit rester cohérent avec `CLAUDE.md` à chaque modification structurante. **Responsable : agent `gardien-doc`.**
 
 ---
 
