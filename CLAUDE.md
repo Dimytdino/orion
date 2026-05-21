@@ -51,10 +51,18 @@ Ce projet a aussi une dimension **pédagogique** : il sert à monter en compéte
 
 ## 4. Organisation des dépôts (état actuel)
 
-- **`orion`** (ce repo, `github.com/Dimytdino/orion`) : projet applicatif — front React/OpenLayers, docker-compose, docs, notes.
-- **`orion-geonode`** (`github.com/Dimytdino/orion-geonode`) : fork de GeoNode upstream avec quelques modifications d'infra (upload size, harakiri uWSGI).
+- **`orion`** (ce repo, `github.com/Dimytdino/orion`) : front React/OpenLayers + documentation + agents Claude Code.
+  - `front/` — application cartographique React/OpenLayers
+  - `docs/adr/` — décisions d'architecture (ADR)
+  - `docs/ROADMAP.md` — feuille de route du projet
+  - `.claude/agents/` — équipe d'agents Claude Code
+- **`orion-geonode`** (`github.com/Dimytdino/orion-geonode`) : back-end GeoNode — **source de vérité pour l'infra**.
+  - GeoNode est une **dépendance pip** (pas un fork), installée depuis un SHA figé
+  - Customisations Orion dans `src/orion_geonode/` (module Django dédié)
+  - `docker-compose.yml` à la racine = source de vérité pour démarrer la stack
+  - CI GitHub Actions : build image + smoke tests (4 endpoints)
 
-**Décision en cours** (à formaliser dans un ADR) : migrer vers une organisation basée sur le template officiel **[geonode-project](https://github.com/GeoNode/geonode-project)**. Voir `docs/adr/0001-strategie-geonode-project.md` (à créer).
+**ADR 0001** (implémenté le 2026-05-19) : choix de la structure geonode-project. Voir `docs/adr/0001-strategie-geonode-project.md`.
 
 ---
 
@@ -129,16 +137,18 @@ Ce projet a aussi une dimension **pédagogique** : il sert à monter en compéte
 ## 9. État d'avancement
 
 - [x] POC : déploiement local de GeoNode 5 via Docker Compose (2026-05-04)
-- [x] POC : première couche publiée
+- [x] POC : première couche publiée, WMS fonctionnel, auth validée
 - [x] POC : front React + OpenLayers minimal avec Map / SearchBar / LayerPanel
-- [ ] Nettoyage : retirer les `LayerPanel_old*.jsx` une fois validé
-- [x] ADR 0001 : choix de la stratégie d'organisation des dépôts (geonode-project) (2026-05-19)
-- [x] Migration vers geonode-project — branche mergée dans `orion-geonode` (2026-05-19)
-- [ ] CI GitHub Actions (lint + build front + tests)
-- [ ] Équipe d'agents IA (sous-agents Claude Code dans `.claude/agents/`)
-- [ ] Documentation d'architecture initiale
-- [ ] Plan d'industrialisation rédigé
+- [x] ADR 0001 : choix de la stratégie geonode-project (2026-05-19)
+- [x] Migration vers geonode-project — implémentée dans `orion-geonode` (2026-05-19)
+- [x] Version GeoNode figée sur SHA validé (2026-05-20)
+- [x] CI GitHub Actions : build image + smoke tests (2026-05-20)
+- [x] Équipe d'agents IA dans `.claude/agents/` (2026-05-19)
+- [x] ROADMAP.md rédigée et à jour (2026-05-20)
+- [x] Doc environnement de développement local (2026-05-20)
+- [ ] Phase 2 : intégration ArcGIS Server (nécessite ADR)
+- [ ] Phase 3 : outils métier calepinage solaire (nécessite ADR)
 
 ---
 
-*Dernière mise à jour : 2026-05-19*
+*Dernière mise à jour : 2026-05-21*
