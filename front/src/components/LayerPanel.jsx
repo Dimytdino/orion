@@ -60,7 +60,7 @@ function LayerPanel({ layers = [], onToggle, onToggleGroup }) {
   const [collapsed, setCollapsed] = useState(false)
   const [width, setWidth] = useState(DEFAULT_WIDTH)
   const [isResizing, setIsResizing] = useState(false)
-  const [openGroups, setOpenGroups] = useState({})
+  const [openGroupOverrides, setOpenGroupOverrides] = useState({})
 
   const resizeStateRef = useRef(null)
 
@@ -78,18 +78,6 @@ function LayerPanel({ layers = [], onToggle, onToggleGroup }) {
   }, [layers])
 
   const groupNames = useMemo(() => Object.keys(groupedLayers), [groupedLayers])
-
-  useEffect(() => {
-    setOpenGroups((previousOpenGroups) => {
-      const nextOpenGroups = {}
-
-      for (const groupName of groupNames) {
-        nextOpenGroups[groupName] = previousOpenGroups[groupName] ?? true
-      }
-
-      return nextOpenGroups
-    })
-  }, [groupNames])
 
   useEffect(() => {
     if (!isResizing) return undefined
@@ -133,9 +121,9 @@ function LayerPanel({ layers = [], onToggle, onToggleGroup }) {
   }
 
   function toggleGroupOpen(groupName) {
-    setOpenGroups((previousOpenGroups) => ({
-      ...previousOpenGroups,
-      [groupName]: !previousOpenGroups[groupName],
+    setOpenGroupOverrides((prev) => ({
+      ...prev,
+      [groupName]: !(prev[groupName] ?? true),
     }))
   }
 
@@ -203,7 +191,7 @@ function LayerPanel({ layers = [], onToggle, onToggleGroup }) {
         <div style={{ flex: 1, overflowY: 'auto' }}>
           {groupNames.map((groupName) => {
             const groupLayers = groupedLayers[groupName]
-            const isOpen = openGroups[groupName] ?? true
+            const isOpen = openGroupOverrides[groupName] ?? true
             const allVisible = groupLayers.length > 0 && groupLayers.every((layer) => layer.visible)
             const someVisible = groupLayers.some((layer) => layer.visible)
 
