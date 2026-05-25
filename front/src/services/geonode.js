@@ -9,6 +9,8 @@
 // qui gérera le cache, le rechargement et les états loading/error. En attendant,
 // on appelle fetch() directement dans App.jsx via cet helper.
 
+import { PROJECTIONS } from '../shared/constants/projections.js'
+
 const GEONODE_API_URL = import.meta.env.VITE_GEONODE_API_URL ?? 'http://localhost/api/v2'
 
 // L'URL OWS (et non WMS seul) permet de centraliser tous les protocoles OGC
@@ -23,7 +25,7 @@ const GEOSERVER_OWS_URL =
  * L'API GeoNode v2 expose /api/v2/datasets/ — chaque dataset a un champ
  * `alternate` qui contient le nom workspace:layer utilisé par GeoServer WMS.
  *
- * @returns {Promise<Array<import('./shared/constants/layers.js').LayerConfig & { visible: boolean }>>}
+ * @returns {Promise<Array<import('../shared/constants/layers.js').LayerConfig & { visible: boolean }>>}
  */
 export async function fetchLayers() {
   const response = await fetch(`${GEONODE_API_URL}/datasets/?format=json&page_size=100`)
@@ -42,7 +44,9 @@ export async function fetchLayers() {
     type: 'WMS',
     url: GEOSERVER_OWS_URL,
     layerName: dataset.alternate,
-    projection: 'EPSG:2154', // GeoServer Orion publie en Lambert 93 par convention
+    // GeoServer Orion publie en Lambert 93 par convention.
+    // On utilise la constante plutôt que la chaîne en dur pour éviter les fautes de frappe.
+    projection: PROJECTIONS.LAMBERT93,
     visibleByDefault: true,
     group: dataset.category?.identifier ?? 'Sans groupe',
     // --- État courant (géré dans le state React de App.jsx) ---

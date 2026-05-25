@@ -13,7 +13,7 @@
 //   sans dépendre du navigateur. Idéal pour valider que le composant répond
 //   correctement aux props et aux actions.
 
-import React from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import { render, screen, fireEvent, cleanup } from '@testing-library/react'
 

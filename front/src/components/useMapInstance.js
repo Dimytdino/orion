@@ -90,7 +90,12 @@ export function useMapInstance(containerRef, { extraLayers = [] } = {}) {
       map.setTarget(null)
       mapRef.current = null
     }
-  }, []) // [] = s'exécute UNE SEULE FOIS au montage. La dépendance containerRef est stable (useRef).
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // [] intentionnel : s'exécute UNE SEULE FOIS au montage.
+  // containerRef est un useRef → sa valeur `.current` est stable entre les renders.
+  // extraLayers est lu à l'initialisation uniquement (design voulu : les couches sont
+  // ajoutées/retirées via map.addLayer/removeLayer après coup, pas en recréant la carte).
+  }, [])
 
   return { mapRef }
 }
