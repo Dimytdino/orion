@@ -29,8 +29,12 @@ Ce repo (**`orion`**) contient :
 
 - `front/` — application cartographique React 19 / Vite 8 / OpenLayers 10
 - `docs/adr/` — décisions d'architecture (ADR numérotées séquentiellement)
+- `docs/specs/` — spécifications fonctionnelles détaillées (SPEC)
+- `docs/besoins/` — fiches de besoin métier (BES) — créé au premier BES
+- `docs/journal/` — journaux de session
 - `docs/ROADMAP.md` — feuille de route du projet
 - `.claude/agents/` — équipe de **sous-agents Claude Code** spécialisés (`architecte-orion`, `dev-geo`, `dev-front`, `relecteur`, `gardien-doc`). Concept propre à Claude Code, **distinct de cet AGENTS.md**.
+- `.claude/skills/` — **skills documentaires** Claude Code (`recueil-besoin`, `spec-fonctionnelle`) : procédures d'écriture standardisées pour produire BES et SPEC, calibrées sur SPEC-2026-001.
 
 Le **back-end** (GeoNode, GeoServer, PostgreSQL/PostGIS, Docker Compose) est dans le repo séparé **`orion-geonode`** : `github.com/Dimytdino/orion-geonode`.
 
@@ -42,4 +46,4 @@ Lis **`CLAUDE.md`** à la racine de ce repo — c'est la mémoire complète et �
 
 ---
 
-*Dernière mise à jour : 2026-05-21 — source de vérité : `CLAUDE.md`*
+*Dernière mise à jour : 2026-05-24 — source de vérité : `CLAUDE.md`*

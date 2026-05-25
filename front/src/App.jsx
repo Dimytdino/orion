@@ -3,28 +3,35 @@
 // Composant racine de l'application Orion.
 //
 // Responsabilités :
-//   - Charger la liste des couches depuis l'API GeoNode (avec fallback statique)
-//   - Gérer la visibilité des couches (état React + instance OpenLayers synchronisés)
-//   - Orchestrer les composants UI (LayerPanel, SearchBar)
-//   - Déléguer la création et le cycle de vie de la carte à `useMapInstance`
+//   - Maintenir l'état de visibilité des couches (state React).
+//   - Synchroniser cet état avec l'instance OpenLayers (via mapRef).
+//   - Charger la liste des couches depuis l'API GeoNode (fallback : LAYERS_CONFIG).
+//   - Orchestrer les composants UI (LayerPanel, SearchBar).
 //
-// Ce composant NE manipule PAS directement l'API OpenLayers pour la création de carte.
-// Toute la logique OL d'initialisation est dans `useMapInstance`.
-// Les couches WMS métier sont gérées ici via `map.addLayer` / `map.removeLayer`.
+// Ce composant NE manipule PAS directement l'API OpenLayers pour la création
+// de carte ni la création de couches :
+//   - La carte est créée par `useMapInstance` (FE-002).
+//   - Les couches TileWMS sont créées par `createWmsLayer` (FE-004).
 
 import { useState, useRef, useEffect } from 'react'
-import TileLayer from 'ol/layer/Tile'
-import TileWMS from 'ol/source/TileWMS'
 import 'ol/ol.css'
 
 import { fetchLayers } from './services/geonode'
-import layersFallback from './config/layers'
+import { LAYERS_CONFIG, getValidLayers } from './shared/constants/layers'
+import { createWmsLayer } from './services/geoserver/createWmsLayer'
 import LayerPanel from './components/LayerPanel'
 import SearchBar from './components/SearchBar'
 import { useMapInstance } from './components/useMapInstance'
 
+// État initial : config statique validée, avec `visible` calculé depuis `visibleByDefault`.
+// Cet état est aussi le fallback si GeoNode est inaccessible.
+const INITIAL_LAYERS = getValidLayers(LAYERS_CONFIG).map((cfg) => ({
+  ...cfg,
+  visible: cfg.visibleByDefault,
+}))
+
 function App() {
-  const [layers, setLayers] = useState([])
+  const [layers, setLayers] = useState(INITIAL_LAYERS)
   const [loading, setLoading] = useState(true)
 
   // containerRef pointe vers le div DOM qui accueille la carte.
@@ -38,7 +45,6 @@ function App() {
 
   // Création de la carte OpenLayers en EPSG:2154, centrée sur la France métro.
   // Le fond de carte (Plan IGN WMTS) sera injecté via extraLayers en FE-011.
-  // En attendant, le CSS background du containerRef affiche un fond gris neutre.
   const { mapRef } = useMapInstance(containerRef)
 
   // ---------------------------------------------------------------------------
@@ -46,11 +52,17 @@ function App() {
   // ---------------------------------------------------------------------------
   useEffect(() => {
     fetchLayers()
-      .then(setLayers)
+      .then((serverLayers) => {
+        // GeoNode accessible : on utilise les couches du serveur.
+        // Les couches serveur incluent déjà le champ `visible` (true par défaut).
+        setLayers(serverLayers)
+      })
       .catch(() => {
         // GeoNode inaccessible (développement sans stack, réseau coupé…) :
-        // on affiche les couches de secours définies dans config/layers.js
-        setLayers(layersFallback)
+        // on garde l'état initial (INITIAL_LAYERS), rien à faire ici.
+        console.warn(
+          'App: API GeoNode inaccessible — affichage des couches de la config statique.'
+        )
       })
       .finally(() => setLoading(false))
   }, [])
@@ -65,23 +77,20 @@ function App() {
     const map = mapRef.current
     if (!map || layers.length === 0) return
 
-    // Retire les anciens TileLayer WMS (sans toucher à la couche de fond en index 0)
+    // Retire les anciens TileLayer WMS
     olLayersRef.current.forEach((l) => map.removeLayer(l))
 
-    const wmsLayers = layers.map(
-      (cfg) =>
-        new TileLayer({
-          source: new TileWMS({
-            url: cfg.url,
-            params: { LAYERS: cfg.layer, TILED: true },
-            serverType: 'geoserver',
-          }),
+    // createWmsLayer ne gère que le type WMS ; on filtre explicitement
+    // pour préparer l'ajout futur de WMTS/WFS/MVT (FE-008 et suivants).
+    const wmsLayers = layers
+      .filter((cfg) => cfg.type === 'WMS')
+      .map((cfg) =>
+        createWmsLayer(cfg, {
+          // `visible` surcharge visibleByDefault : on respecte l'état courant
+          // (l'utilisateur peut avoir togglé la couche avant ce re-render)
           visible: cfg.visible,
-          // On stocke l'id dans les propriétés OL pour pouvoir retrouver la couche
-          // lors d'un toggle sans parcourir tout le tableau `layers`
-          properties: { id: cfg.id },
         })
-    )
+      )
 
     wmsLayers.forEach((l) => map.addLayer(l))
     olLayersRef.current = wmsLayers
@@ -101,6 +110,7 @@ function App() {
       prev.map((l) => (l.id === id ? { ...l, visible: !l.visible } : l))
     )
 
+    // Mise à jour OL directe pour un retour visuel immédiat (sans attendre le re-render)
     const olLayer = olLayersRef.current.find((l) => l.get('id') === id)
     if (olLayer) olLayer.setVisible(!olLayer.getVisible())
   }

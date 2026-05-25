@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
 
 const MIN_WIDTH = 180
@@ -268,7 +268,7 @@ function LayerPanel({ layers = [], onToggle, onToggleGroup }) {
                       type="button"
                       onClick={() => onToggle(layer.id)}
                       aria-pressed={layer.visible}
-                      aria-label={`${layer.visible ? 'Masquer' : 'Afficher'} la couche ${layer.label}`}
+                      aria-label={`${layer.visible ? 'Masquer' : 'Afficher'} la couche ${layer.title}`}
                       style={{
                         width: '100%',
                         display: 'flex',
@@ -297,7 +297,7 @@ function LayerPanel({ layers = [], onToggle, onToggleGroup }) {
                           transition: 'color 0.15s',
                         }}
                       >
-                        {layer.label}
+                        {layer.title}
                       </span>
                     </button>
                   ))}
@@ -380,7 +380,7 @@ LayerPanel.propTypes = {
     PropTypes.shape({
       id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
       group: PropTypes.string,
-      label: PropTypes.string.isRequired,
+      title: PropTypes.string.isRequired,
       visible: PropTypes.bool.isRequired,
     }),
   ),
