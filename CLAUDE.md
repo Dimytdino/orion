@@ -51,11 +51,15 @@ Ce projet a aussi une dimension **pédagogique** : il sert à monter en compéte
 
 ## 4. Organisation des dépôts (état actuel)
 
-- **`orion`** (ce repo, `github.com/Dimytdino/orion`) : front React/OpenLayers + documentation + agents Claude Code.
+- **`orion`** (ce repo, `github.com/Dimytdino/orion`) : front React/OpenLayers + documentation + agents et skills Claude Code.
   - `front/` — application cartographique React/OpenLayers
   - `docs/adr/` — décisions d'architecture (ADR)
+  - `docs/specs/` — spécifications fonctionnelles détaillées (SPEC)
+  - `docs/besoins/` — fiches de besoin métier (BES) — dossier à créer dès le premier BES
+  - `docs/journal/` — journaux de session (`JOURNAL_AAAA-MM-JJ.md`)
   - `docs/ROADMAP.md` — feuille de route du projet
-  - `.claude/agents/` — équipe d'agents Claude Code
+  - `.claude/agents/` — équipe d'agents Claude Code (`architecte-orion`, `dev-geo`, `dev-front`, `relecteur`, `gardien-doc`)
+  - `.claude/skills/` — skills documentaires (`recueil-besoin`, `spec-fonctionnelle`) calibrés sur SPEC-2026-001
 - **`orion-geonode`** (`github.com/Dimytdino/orion-geonode`) : back-end GeoNode — **source de vérité pour l'infra**.
   - GeoNode est une **dépendance pip** (pas un fork), installée depuis un SHA figé
   - Customisations Orion dans `src/orion_geonode/` (module Django dédié)
@@ -139,19 +143,40 @@ Ce projet a aussi une dimension **pédagogique** : il sert à monter en compéte
 
 ## 9. État d'avancement
 
+### Back-end (`orion-geonode`)
+
 - [x] POC : déploiement local de GeoNode 5 via Docker Compose (2026-05-04)
 - [x] POC : première couche publiée, WMS fonctionnel, auth validée
-- [x] POC : front React + OpenLayers minimal avec Map / SearchBar / LayerPanel
 - [x] ADR 0001 : choix de la stratégie geonode-project (2026-05-19)
 - [x] Migration vers geonode-project — implémentée dans `orion-geonode` (2026-05-19)
 - [x] Version GeoNode figée sur SHA validé (2026-05-20)
 - [x] CI GitHub Actions : build image + smoke tests (2026-05-20)
-- [x] Équipe d'agents IA dans `.claude/agents/` (2026-05-19)
-- [x] ROADMAP.md rédigée et à jour (2026-05-20)
 - [x] Doc environnement de développement local (2026-05-20)
-- [ ] Phase 2 : intégration ArcGIS Server (nécessite ADR)
-- [ ] Phase 3 : outils métier calepinage solaire (nécessite ADR)
+
+### Front-end (`orion/front`) — cadrage méthodologique
+
+- [x] POC visuel initial : Map / SearchBar / LayerPanel
+- [x] SPEC-2026-001 v0.3 rédigée (`docs/specs/`) — statut `Brouillon avancé` (2026-05-24)
+- [x] ADR 0002 : migration TypeScript différée hors POC (2026-05-24)
+- [x] ADR 0003 : architecture feature-based frontend (2026-05-24)
+- [x] ADR 0004 : scope React Query limité aux données serveur métier (2026-05-24)
+- [ ] **Validation humaine de SPEC-2026-001 et des ADR-0002/0003/0004** (signatures `valide_par_metier` + `valide_par_tech`) — **bloque l'exécution des tickets `FE-…`**
+- [ ] Exécution des tickets FE-001B → FE-007 (refactor structurel, hook OL, React Query)
+
+### Méthodologie et agents
+
+- [x] Équipe d'agents IA dans `.claude/agents/` (2026-05-19)
+- [x] ROADMAP.md rédigée — refonte à jour au 2026-05-24
+- [x] Skills documentaires dans `.claude/skills/` : `recueil-besoin` et `spec-fonctionnelle` (2026-05-24)
+- [x] Convention de frontmatter standardisée sur BES / SPEC / ADR (2026-05-24)
+- [x] Premier BES réel produit via `recueil-besoin` : **BES-2026-001** (édition des couches affichées, statut `Brouillon`, 12 questions ouvertes — 2026-05-24)
+- [ ] Entretien complémentaire sur BES-2026-001 pour résoudre les questions ouvertes et passer en `Validé`
+
+### Phases ultérieures
+
+- [ ] Phase 2 : intégration ArcGIS Server (nécessite BES + ADR préalables)
+- [ ] Phase 3 : outils métier calepinage solaire (nécessite BES + ADR préalables)
 
 ---
 
-*Dernière mise à jour : 2026-05-21*
+*Dernière mise à jour : 2026-05-24*
