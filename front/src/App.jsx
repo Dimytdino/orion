@@ -94,7 +94,10 @@ function App() {
 
     wmsLayers.forEach((l) => map.addLayer(l))
     olLayersRef.current = wmsLayers
-  }, [layers]) // mapRef est une ref stable — intentionnellement absente des deps
+  // mapRef est une ref stable (useRef) — intentionnellement absent des deps.
+  // Le modifier déclencherait une boucle infinie (l'effet lui-même met à jour la carte).
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [layers])
 
   // ---------------------------------------------------------------------------
   // Gestionnaires d'événements UI

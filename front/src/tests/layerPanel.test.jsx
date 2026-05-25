@@ -13,16 +13,16 @@
 //   sans dépendre du navigateur. Idéal pour valider que le composant répond
 //   correctement aux props et aux actions.
 
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React from 'react'
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import { render, screen, fireEvent, cleanup } from '@testing-library/react'
+import LayerPanel from '../components/LayerPanel.jsx'
 
 // Testing Library ne peut pas appeler afterEach automatiquement en mode non-global.
 // On vide le DOM après chaque test pour éviter l'accumulation de composants rendus.
 afterEach(() => {
   cleanup()
 })
-import LayerPanel from '../components/LayerPanel.jsx'
 
 // Fixtures — deux couches dans deux groupes distincts
 const LAYERS = [

@@ -17,5 +17,13 @@ export default defineConfig([
       globals: globals.browser,
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
+    rules: {
+      // Vite 8 / Rolldown utilise le runtime JSX classique (React.createElement).
+      // React doit donc être importé dans tout fichier .jsx, mais ESLint ne voit
+      // pas cette utilisation implicite et le signale comme "inutilisé".
+      // On exclut React du contrôle no-unused-vars plutôt que de lutter contre
+      // le runtime bundler.
+      'no-unused-vars': ['error', { varsIgnorePattern: '^React$' }],
+    },
   },
 ])
